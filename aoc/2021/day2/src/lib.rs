@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct Value {
     length: u32,
     depth: u32,
@@ -78,6 +78,30 @@ impl ValueWithAim {
             aim: 0,
         }
     }
+
+    fn compute_forward(&self, value: u32) -> Self {
+        ValueWithAim {
+            value: Value {
+                length: self.value.length + value,
+                depth: self.value.depth + self.aim * value,
+            },
+            aim: self.aim,
+        }
+    }
+
+    fn increase_aim(&self, aim: u32) -> Self {
+        ValueWithAim {
+            value: self.value,
+            aim: self.aim + aim,
+        }
+    }
+
+    fn decrease_aim(&self, aim: u32) -> Self {
+        ValueWithAim {
+            value: self.value,
+            aim: self.aim - aim,
+        }
+    }
 }
 
 fn day2_part2(data: &Vec<&str>) -> String {
@@ -88,22 +112,9 @@ fn day2_part2(data: &Vec<&str>) -> String {
 
         // Return one of these values
         match identifier {
-            "forward" => ValueWithAim {
-                value: Value {
-                    length: acc.value.length + value,
-                    depth: acc.value.depth + acc.aim * value,
-                },
-                aim: acc.aim,
-            },
-            "down" => ValueWithAim {
-                value: acc.value,
-                aim: acc.aim + value,
-            },
-
-            "up" => ValueWithAim {
-                value: acc.value,
-                aim: acc.aim - value,
-            },
+            "forward" => acc.compute_forward(value),
+            "down" => acc.increase_aim(value),
+            "up" => acc.decrease_aim(value),
             _ => ValueWithAim::new(),
         }
     });
