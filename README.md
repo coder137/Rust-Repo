@@ -24,5 +24,5 @@ Rust Repository
 ## Tools
 
 - [ ] Static Analysis
-- [ ] Code coverage
+- [x] Code coverage
 - [ ] Documentation
