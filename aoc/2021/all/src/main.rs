@@ -1,20 +1,14 @@
-use std::collections::HashMap;
-
 use day1;
 
 fn main() {
-    let solutions: HashMap<u8, String> = HashMap::from([
-        (0, day1::day1_part1_solution()),
-        (1, day1::day1_part2_solution()),
-    ]);
+    let solutions = vec![day1::day1_part1_solution(), day1::day1_part2_solution()];
 
-    let length = solutions.len() as u8;
-    (0..length).for_each(|x| {
+    solutions.iter().enumerate().for_each(|(index, data)| {
         println!(
             "Day {} Part {} -> Solution: {}",
-            x / 2,
-            x % 2,
-            solutions[&x]
+            index / 2 + 1,
+            index % 2 + 1,
+            data
         );
-    });
+    })
 }
