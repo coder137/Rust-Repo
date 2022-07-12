@@ -23,6 +23,7 @@ Rust Repository
 
 ## Tools
 
+- [x] CI/CD
 - [ ] Static Analysis
 - [x] Code coverage
 - [ ] Documentation
