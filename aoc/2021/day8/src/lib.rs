@@ -247,8 +247,8 @@ mod tests {
             .map(|x| Pattern::new(x))
             .collect::<Vec<Pattern>>();
 
-        assert_eq!(parsed_data[0].unique_pattern[0], "be");
-        assert_eq!(parsed_data[0].output_value[0], "fdgacbe");
+        assert_eq!(parsed_data[0].unique_pattern[0], sort("be"));
+        assert_eq!(parsed_data[0].output_value[0], sort("fdgacbe"));
 
         // Number 1: Has 2 letters
         // Number 4: Has 4 letters
