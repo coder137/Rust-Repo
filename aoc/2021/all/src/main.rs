@@ -23,6 +23,8 @@ fn main() {
         day6::day6_part2_solution(),
         day7::day7_part1_solution(),
         day7::day7_part2_solution(),
+        day8::day8_part1_solution(),
+        day8::day8_part2_solution(),
     ];
 
     solutions.iter().enumerate().for_each(|(index, data)| {
