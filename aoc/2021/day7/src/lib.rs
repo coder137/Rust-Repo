@@ -45,8 +45,8 @@ fn day7_part1(data: &[u32]) -> u32 {
     final_answer
 }
 
-pub fn day7_part1_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day7").join("input.txt"));
+pub fn day7_part1_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
 
     let parsed_data = data
         .trim()
@@ -98,8 +98,8 @@ fn day7_part2(data: &[u32]) -> u32 {
     final_answer
 }
 
-pub fn day7_part2_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day7").join("input.txt"));
+pub fn day7_part2_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
 
     let parsed_data = data
         .trim()

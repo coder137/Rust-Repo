@@ -73,8 +73,8 @@ impl Range {
     }
 }
 
-fn parse_values_from_file() -> Vec<Range> {
-    let data = common::read_file(&PathBuf::new().join("day5").join("input.txt"));
+fn parse_values_from_file(path: &PathBuf) -> Vec<Range> {
+    let data = common::read_file(path);
     data.trim()
         .split('\n')
         .map(|m| m.trim().split("->").collect::<Vec<&str>>())
@@ -125,8 +125,8 @@ fn day5_part1(ranges: &Vec<Range>) -> String {
         .to_string()
 }
 
-pub fn day5_part1_solution() -> String {
-    let ranges = parse_values_from_file();
+pub fn day5_part1_solution(path: &PathBuf) -> String {
+    let ranges = parse_values_from_file(path);
     day5_part1(&ranges)
 }
 
@@ -158,8 +158,8 @@ fn day5_part2(ranges: &Vec<Range>) -> String {
         .to_string()
 }
 
-pub fn day5_part2_solution() -> String {
-    let ranges = parse_values_from_file();
+pub fn day5_part2_solution(path: &PathBuf) -> String {
+    let ranges = parse_values_from_file(path);
     day5_part2(&ranges)
 }
 

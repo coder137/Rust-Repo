@@ -57,8 +57,8 @@ fn day2_part1(data: &Vec<&str>) -> String {
     fvalue.product().to_string()
 }
 
-pub fn day2_part1_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day2").join("input.txt"));
+pub fn day2_part1_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let split: Vec<&str> = data.trim().split("\n").collect();
     day2_part1(&split)
 }
@@ -121,8 +121,8 @@ fn day2_part2(data: &Vec<&str>) -> String {
     fvalue.value.product().to_string()
 }
 
-pub fn day2_part2_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day2").join("input.txt"));
+pub fn day2_part2_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let split: Vec<&str> = data.trim().split("\n").collect();
     day2_part2(&split)
 }

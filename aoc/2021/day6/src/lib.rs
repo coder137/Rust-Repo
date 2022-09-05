@@ -41,8 +41,8 @@ fn day6_part1(state: Vec<u32>) -> String {
     FishState::new(state).nth(79).unwrap().len().to_string()
 }
 
-pub fn day6_part1_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day6").join("input.txt"));
+pub fn day6_part1_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let state = data
         .trim()
         .split(',')
@@ -80,8 +80,8 @@ fn day6_part2(state: Vec<u32>) -> String {
         .to_string()
 }
 
-pub fn day6_part2_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day6").join("input.txt"));
+pub fn day6_part2_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let state = data
         .trim()
         .split(',')
