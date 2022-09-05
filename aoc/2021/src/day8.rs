@@ -173,8 +173,8 @@ impl<'a> Pattern {
     }
 }
 
-fn parse_values_from_file() -> Vec<Pattern> {
-    let data = common::read_file(&PathBuf::new().join("day8").join("input.txt"));
+fn parse_values_from_file(path: &PathBuf) -> Vec<Pattern> {
+    let data = common::read_file(path);
 
     data.trim()
         .split("\n")
@@ -199,8 +199,8 @@ fn day8_part1(data: &Vec<Pattern>) -> u32 {
         .sum::<u32>()
 }
 
-pub fn day8_part1_solution() -> String {
-    let parsed_data = parse_values_from_file();
+pub fn day8_part1_solution(path: &PathBuf) -> String {
+    let parsed_data = parse_values_from_file(path);
     day8_part1(&parsed_data).to_string()
 }
 
@@ -208,8 +208,8 @@ fn day8_part2(data: &Vec<Pattern>) -> u32 {
     data.iter().map(|x| x.deduce_output_value()).sum()
 }
 
-pub fn day8_part2_solution() -> String {
-    let parsed_data = parse_values_from_file();
+pub fn day8_part2_solution(path: &PathBuf) -> String {
+    let parsed_data = parse_values_from_file(path);
     day8_part2(&parsed_data).to_string()
 }
 

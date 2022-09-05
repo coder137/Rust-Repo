@@ -1,13 +1,9 @@
-[workspace]
+[package]
+name = "all"
+version = "0.1.0"
+edition = "2021"
 
-members = [
-    "day1",
-    "day2",
-    "day3",
-    "day4",
-    "day5",
-    "day6",
-    "day7",
-    "day8",
-    "all",
-]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = {path = "common" }

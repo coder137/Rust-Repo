@@ -58,8 +58,8 @@ fn day3_part1(data: &Vec<&str>) -> String {
     (gamma * epsilon).to_string()
 }
 
-pub fn day3_part1_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day3").join("input.txt"));
+pub fn day3_part1_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let split = data.trim().split("\n").collect::<Vec<&str>>();
     day3_part1(&split)
 }
@@ -134,8 +134,8 @@ fn day3_part2(data: &Vec<&str>) -> String {
     (o2 * co2).to_string()
 }
 
-pub fn day3_part2_solution() -> String {
-    let data = common::read_file(&PathBuf::new().join("day3").join("input.txt"));
+pub fn day3_part2_solution(path: &PathBuf) -> String {
+    let data = common::read_file(path);
     let split = data.trim().split("\n").collect::<Vec<&str>>();
     day3_part2(&split)
 }

@@ -105,8 +105,8 @@ impl BingoCard {
     }
 }
 
-fn parse_values_from_file() -> (Vec<u32>, Vec<BingoCard>) {
-    let read = common::read_file(&PathBuf::new().join("day4").join("input.txt"));
+fn parse_values_from_file(path: &PathBuf) -> (Vec<u32>, Vec<BingoCard>) {
+    let read = common::read_file(path);
     let split = read.trim().split("\n").collect::<Vec<&str>>();
 
     // *
@@ -174,8 +174,8 @@ fn day4_part1(numbers: Vec<u32>, mut bingo_cards: Vec<BingoCard>) -> String {
     winning_value.unwrap().to_string()
 }
 
-pub fn day4_part1_solution() -> String {
-    let (numbers, bingo_cards) = parse_values_from_file();
+pub fn day4_part1_solution(path: &PathBuf) -> String {
+    let (numbers, bingo_cards) = parse_values_from_file(path);
     day4_part1(numbers, bingo_cards)
 }
 
@@ -197,8 +197,8 @@ fn day4_part2(numbers: Vec<u32>, mut bingo_cards: Vec<BingoCard>) -> String {
         .to_string()
 }
 
-pub fn day4_part2_solution() -> String {
-    let (numbers, bingo_cards) = parse_values_from_file();
+pub fn day4_part2_solution(path: &PathBuf) -> String {
+    let (numbers, bingo_cards) = parse_values_from_file(path);
     day4_part2(numbers, bingo_cards)
 }
 
