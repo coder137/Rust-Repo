@@ -97,6 +97,13 @@ fn main() {
         });
     }
 
+    let output_data = fs::read_to_string(format!(
+        "{}/CMakeFiles/CMakeOutput.log",
+        build_options.build_path
+    ))
+    .unwrap();
+    println!("cargo:warning=CMakeOutput.log: {:?}", output_data);
+
     // Link to project
     println!("cargo:rustc-link-search={}", build_options.library_path);
     println!("cargo:rustc-link-lib={}", build_options.library_name);
