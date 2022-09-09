@@ -1,5 +1,6 @@
 use core::panic;
 use std::env;
+use std::fs;
 use std::process::Command;
 
 struct CLibBuildOptions {
@@ -25,7 +26,7 @@ fn get_c_lib_build_options() -> CLibBuildOptions {
     let mut build_options = CLibBuildOptions::default();
 
     let target = env::var("TARGET").unwrap();
-    println!("cargo:warning={}", target);
+    println!("cargo:warning=Target: {}", target);
     if env::var("CARGO_CFG_UNIX").is_ok() {
         // Unix toolchains
         build_options.cmake_generator = "Ninja Multi-Config".to_string();
@@ -71,6 +72,21 @@ fn main() {
         .args(["--build", &build_options.build_path, "--config", "Release"])
         .output()
         .expect("Failed to build cmake command");
+
+    // Print information
+    println!(
+        "cargo:warning=Current Directory: {:?}",
+        env::current_dir().unwrap()
+    );
+    let dir_iter = fs::read_dir(build_options.library_path.clone());
+    if dir_iter.is_ok() {
+        dir_iter.unwrap().for_each(|x| {
+            if x.is_ok() {
+                let dir_entry = x.unwrap();
+                println!("cargo:warning=Dir Entry: {:?}", dir_entry);
+            }
+        });
+    }
 
     // Link to project
     println!("cargo:rustc-link-search={}", build_options.library_path);
