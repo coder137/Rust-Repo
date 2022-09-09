@@ -26,6 +26,9 @@ jobs:
       - name: FFI, Call C from Rust
         working-directory: ${{github.workspace}}/ffi/call_c_from_rust
         run: |
+          pwd
+          cd ${{github.workspace}}/ffi/call_c_from_rust
+          pwd
           cargo build
           cargo test
           cargo run --release
