@@ -26,7 +26,6 @@ jobs:
       - name: FFI, Call C from Rust
         working-directory: ${{github.workspace}}/ffi/call_c_from_rust
         run: |
-          cmake --version
-          cmake --help
           cargo run --release
           cargo test
+          cat _build_x86_64-unknown-linux-gnu/CMakeFiles/CMakeOutput.log
