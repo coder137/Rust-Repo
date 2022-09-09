@@ -2,6 +2,7 @@ use core::panic;
 use std::env;
 use std::fs;
 use std::process::Command;
+use std::str;
 
 struct CLibBuildOptions {
     cmake_generator: String,
@@ -66,12 +67,20 @@ fn main() {
         ])
         .output()
         .expect("Failed to execute cmake command");
+    println!(
+        "cargo:warning=Output: {:?}",
+        str::from_utf8(&_output.stdout).unwrap()
+    );
 
     // Build
     let _output = Command::new("cmake")
         .args(["--build", &build_options.build_path, "--config", "Release"])
         .output()
         .expect("Failed to build cmake command");
+    println!(
+        "cargo:warning=Output: {:?}",
+        str::from_utf8(&_output.stdout).unwrap()
+    );
 
     // Print information
     println!(
