@@ -26,8 +26,7 @@ jobs:
       - name: FFI, Call C from Rust
         working-directory: ${{github.workspace}}/ffi/call_c_from_rust
         run: |
-          cc -v
-          gcc -v
-          g++ -v
+          cmake -G "Ninja Multi-Config" -B _build_x86_64-unknown-linux-gnu -S c_lib
+          cmake --build _build_x86_64-unknown-linux-gnu --config Release
           cargo run --release
           cargo test
