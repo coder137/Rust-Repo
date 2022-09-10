@@ -73,13 +73,6 @@ fn main() {
         str::from_utf8(&_output.stdout).unwrap()
     );
 
-    let output_data = fs::read_to_string(format!(
-        "{}/CMakeFiles/CMakeOutput.log",
-        build_options.build_path
-    ))
-    .unwrap();
-    println!("cargo:warning=CMakeOutput.log: {:?}", output_data);
-
     // Build
     let _output = Command::new("cmake")
         .args(["--build", &build_options.build_path, "--config", "Release"])
@@ -89,21 +82,6 @@ fn main() {
         "cargo:warning=Output: {:?}",
         str::from_utf8(&_output.stdout).unwrap()
     );
-
-    // Print information
-    println!(
-        "cargo:warning=Current Directory: {:?}",
-        env::current_dir().unwrap()
-    );
-    let dir_iter = fs::read_dir(build_options.library_path.clone());
-    if dir_iter.is_ok() {
-        dir_iter.unwrap().for_each(|x| {
-            if x.is_ok() {
-                let dir_entry = x.unwrap();
-                println!("cargo:warning=Dir Entry: {:?}", dir_entry);
-            }
-        });
-    }
 
     // Link to project
     println!("cargo:rustc-link-search={}", build_options.library_path);
