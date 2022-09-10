@@ -10,11 +10,15 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  linux_build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install packages
+        run: |
+          sudo apt-get install ninja-build
 
       - name: Advent of Code 2021
         working-directory: ${{github.workspace}}/aoc/2021
@@ -22,3 +26,9 @@ jobs:
           cargo build
           cargo test
           cargo run --release
+
+      - name: FFI, Call C from Rust
+        working-directory: ${{github.workspace}}/ffi/call_c_from_rust
+        run: |
+          cargo run --release
+          cargo test
