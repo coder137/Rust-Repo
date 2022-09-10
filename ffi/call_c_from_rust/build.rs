@@ -53,6 +53,8 @@ fn get_c_lib_build_options() -> CLibBuildOptions {
 fn main() {
     // Get generator and lib_path dependending on "target" to be built
     let build_options = get_c_lib_build_options();
+    println!("cargo:rerun-if-changed=c_lib");
+    println!("cargo:rerun-if-changed={}", build_options.library_path);
 
     // Generate
     let _output = Command::new("cmake")
@@ -63,7 +65,6 @@ fn main() {
             &build_options.build_path,
             "-S",
             "c_lib",
-            "-DCMAKE_BUILD_TYPE:STRING=Release",
         ])
         .output()
         .expect("Failed to execute cmake command");
@@ -71,6 +72,13 @@ fn main() {
         "cargo:warning=Output: {:?}",
         str::from_utf8(&_output.stdout).unwrap()
     );
+
+    let output_data = fs::read_to_string(format!(
+        "{}/CMakeFiles/CMakeOutput.log",
+        build_options.build_path
+    ))
+    .unwrap();
+    println!("cargo:warning=CMakeOutput.log: {:?}", output_data);
 
     // Build
     let _output = Command::new("cmake")
@@ -96,13 +104,6 @@ fn main() {
             }
         });
     }
-
-    let output_data = fs::read_to_string(format!(
-        "{}/CMakeFiles/CMakeOutput.log",
-        build_options.build_path
-    ))
-    .unwrap();
-    println!("cargo:warning=CMakeOutput.log: {:?}", output_data);
 
     // Link to project
     println!("cargo:rustc-link-search={}", build_options.library_path);
