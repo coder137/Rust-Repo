@@ -16,6 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install packages
+        run: |
+          sudo apt-get install ninja-build
+
       - name: Advent of Code 2021
         working-directory: ${{github.workspace}}/aoc/2021
         run: |
@@ -26,7 +30,5 @@ jobs:
       - name: FFI, Call C from Rust
         working-directory: ${{github.workspace}}/ffi/call_c_from_rust
         run: |
-          cmake -G "Ninja Multi-Config" -B _build_x86_64-unknown-linux-gnu -S c_lib
-          cmake --build _build_x86_64-unknown-linux-gnu --config Release
           cargo run --release
           cargo test
