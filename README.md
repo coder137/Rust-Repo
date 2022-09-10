@@ -6,19 +6,21 @@ Rust Repository
 
 ## Advanced Language features
 
+- [x] FFI
+  - [x] C in Rust executable
+  - [x] Rust in C executable
 - [ ] Concurrency
 - [ ] `no_std` vs `std`
 - [ ] Unsafe rust
 
 ## Packaging
 
-- [ ] Creating libraries with ABI compatibility (C repr)
-- [ ] `build.rs` buildsystem 
+- [x] `build.rs` buildsystem 
 
 ## Testing
 
-- [ ] Unit testing
-- [ ] Mocking
+- [x] Unit testing
+- [x] Mocking
 - [ ] Debugging
 
 ## Tools
