@@ -19,6 +19,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get install ninja-build
+          cargo install cbindgen
 
       - name: Advent of Code 2021
         working-directory: ${{github.workspace}}/aoc/2021
@@ -32,3 +33,10 @@ jobs:
         run: |
           cargo run --release
           cargo test
+
+      - name: FFI, Call Rust from C
+        working-directory: ${{github.workspace}}/ffi/call_rust_from_c
+        run: |
+          cmake -B build -G Ninja
+          cmake --build build
+          ./build/call_rust_from_c_example
