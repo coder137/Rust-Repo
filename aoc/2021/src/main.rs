@@ -12,6 +12,7 @@ mod day9;
 
 mod day10;
 mod day11;
+mod day12;
 
 fn main() {
     // NOTE, Just update this vector
@@ -38,6 +39,8 @@ fn main() {
         day10::day10_part2_solution,
         day11::day11_part1_solution,
         day11::day11_part2_solution,
+        day12::day12_part1_solution,
+        day12::day12_part2_solution,
     ];
 
     solutions.iter().enumerate().for_each(|(index, soln_cb)| {
