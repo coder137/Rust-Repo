@@ -76,51 +76,6 @@ impl<'a> Graph<'a> {
 
     /// Iter 3
     /// ...
-    fn compute_next_paths(&self) -> Option<Vec<Vec<Cave>>> {
-        let current_cave = self.path.last().unwrap();
-
-        if current_cave.name == "end" {
-            // NOTE, If current_cave == "end" then we return None
-            None
-        } else {
-            let mut cave_paths: Vec<Vec<Cave>> = Vec::new();
-
-            // NOTE, We append the new cave location to the end of self.path
-            let allowed_paths_from_current_cave =
-                self.allowed_paths.get(&current_cave.name).unwrap();
-
-            // println!(
-            //     "Current: {:?}, Allowed: {:?} Revisit: {}",
-            //     self.get_cave_name_path(),
-            //     allowed_paths_from_current_cave,
-            //     self.revisit_times,
-            // );
-
-            for cave_name in allowed_paths_from_current_cave {
-                let cave_to_go = Cave::new(cave_name.clone());
-
-                // Small cave &&
-                // Cave has already been visited
-                let add_cave = if !cave_to_go.big && self.already_visited(&cave_to_go) {
-                    // We ignore this path
-                    // for example: start -> b -> d -> b (wrong)
-                    false
-                } else {
-                    // Add cave path
-                    true
-                };
-
-                if add_cave {
-                    let mut new_cave_path = self.path.clone();
-                    new_cave_path.push(cave_to_go);
-                    cave_paths.push(new_cave_path);
-                }
-            }
-
-            Some(cave_paths)
-        }
-    }
-
     fn compute_next_path_as_graph(&self) -> Option<Vec<Graph<'a>>> {
         let last_cave_travelled = self.get_last_cave_travelled();
         if last_cave_travelled.name == "end" {
@@ -227,7 +182,7 @@ fn day12_part1(allowed_paths: &HashMap<String, HashSet<String>>) -> u32 {
 
     while !queue.is_empty() {
         let current_graph = queue.pop().unwrap();
-        let paths = current_graph.compute_next_paths();
+        let paths = current_graph.compute_next_path_as_graph();
 
         if paths.is_none() {
             // We have reached the end
@@ -235,8 +190,8 @@ fn day12_part1(allowed_paths: &HashMap<String, HashSet<String>>) -> u32 {
             full_traversal_counter += 1;
         } else {
             // We have not reached the end
-            for next_path in paths.unwrap() {
-                let new_graph = Graph::new(next_path, &allowed_paths);
+            for g in paths.unwrap() {
+                let new_graph = Graph::new(g.path, g.allowed_paths);
                 queue.push(new_graph);
             }
         }
