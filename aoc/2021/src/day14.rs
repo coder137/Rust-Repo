@@ -97,7 +97,16 @@ pub fn day14_part1_solution(path: &PathBuf) -> String {
     day14_part1(start, &map).to_string()
 }
 
-//
+/// ChainPolymerTemplate is a more efficient implementation of PolymerTemplate
+/// Problem with PolymerTemplate: For higher iterations (nth computation) of PolymerTemplate, the memory allocations would be very high + computations would be slower
+/// ChainPolymerTemplate exploits the fact that the given `map` of byte[2] -> byte[1] is added whenever an adjacent pair of byte[2] is found in a string
+/// This creates another byte[2] pair which repeats over time
+/// For example: NNCB can be broken up into {NN:1, NC:1, CB:1}
+/// First Iteration NCNBCHB {NC:1, CN:1, NB:1, BC:1, CH:1, HB:1}
+/// Second Iteration: NBCCNBBBCBHCB {CC:1, NB:2, HC:1, CN:1, BB:2, BC:2, BH:1, CB:2}
+/// ... etc
+/// We can now expand this very easily for the next iteration and store it more efficiently (count value instead of a large string)
+/// We can also keep a count map to count 'chars: usize' seperately to solve the problem
 struct ChainPolymerTemplate<'a> {
     chain: HashMap<String, usize>,
     map: &'a HashMap<String, char>,
