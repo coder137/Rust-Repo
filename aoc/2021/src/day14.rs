@@ -212,10 +212,15 @@ impl<'a> Iterator for ChainPolymerTemplate<'a> {
 }
 
 fn day14_part2(start: String, map: &HashMap<String, char>) -> usize {
-    0
+    let mut chain_polymer_template = ChainPolymerTemplate::new(start, map);
+    chain_polymer_template.nth(39);
+    chain_polymer_template.get_diff()
 }
 
-pub fn day14_part2_solution() {}
+pub fn day14_part2_solution(path: &PathBuf) -> String {
+    let (start, map) = parse_values_from_file(path);
+    day14_part2(start, &map).to_string()
+}
 
 #[cfg(test)]
 mod tests {
@@ -285,8 +290,9 @@ CN -> C";
     #[test]
     fn test_day14_part2() {
         let (start, map) = test_parse();
-        let mut chain_polymer_template = ChainPolymerTemplate::new(start.clone(), &map);
-        chain_polymer_template.nth(39);
-        assert_eq!(chain_polymer_template.get_diff(), 2188189693529);
+        assert_eq!(day14_part2(start, &map), 2188189693529);
+
+        let solution = day14_part2_solution(&PathBuf::new().join("inputs").join("day14_input.txt"));
+        println!("Solution: {}", solution);
     }
 }
