@@ -23,6 +23,17 @@ impl<'a> PolymerTemplate<'a> {
         });
         count_map
     }
+
+    fn get_diff(&self) -> usize {
+        let mut max = usize::MIN;
+        let mut min = usize::MAX;
+        self.get_element_counts().iter().for_each(|(_, value)| {
+            let v = *value;
+            max = v.max(max);
+            min = v.min(min);
+        });
+        max.checked_sub(min).unwrap()
+    }
 }
 
 impl<'a> Iterator for PolymerTemplate<'a> {
@@ -78,22 +89,124 @@ fn parse_values_from_file(path: &PathBuf) -> (String, HashMap<String, char>) {
 fn day14_part1(start: String, map: &HashMap<String, char>) -> usize {
     let mut polymer_template = PolymerTemplate::new(start, &map);
     polymer_template.nth(9).unwrap();
-    let element_counts = polymer_template.get_element_counts();
-
-    let mut max = usize::MIN;
-    let mut min = usize::MAX;
-    element_counts.iter().for_each(|(_, value)| {
-        let v = *value;
-        max = v.max(max);
-        min = v.min(min);
-    });
-    max.checked_sub(min).unwrap()
+    polymer_template.get_diff()
 }
 
 pub fn day14_part1_solution(path: &PathBuf) -> String {
     let (start, map) = parse_values_from_file(path);
     day14_part1(start, &map).to_string()
 }
+
+//
+struct ChainPolymerTemplate<'a> {
+    chain: HashMap<String, usize>,
+    map: &'a HashMap<String, char>,
+    count: HashMap<char, usize>,
+}
+
+impl<'a> ChainPolymerTemplate<'a> {
+    fn new(start: String, map: &'a HashMap<String, char>) -> Self {
+        // Initialize chain
+        // For example: {NN: 1, NC: 1, CB: 1}
+        let mut chain = HashMap::new();
+        (0..start.len() - 1)
+            .map(|index| {
+                let slice = &start[index..index + 2];
+                slice.to_string()
+            })
+            .for_each(|data| {
+                if chain.contains_key(&data) {
+                    let value = chain.get_mut(&data).unwrap();
+                    *value += 1;
+                } else {
+                    chain.insert(data, 1);
+                }
+            });
+
+        // Initialize count
+        // For example: {N:2, C:1, B:1}
+        let mut count = HashMap::new();
+        start.chars().for_each(|c| {
+            if count.contains_key(&c) {
+                let value = count.get_mut(&c).unwrap();
+                *value += 1;
+            } else {
+                count.insert(c, 1);
+            }
+        });
+        Self { chain, map, count }
+    }
+
+    fn get_diff(&self) -> usize {
+        let mut max = usize::MIN;
+        let mut min = usize::MAX;
+        self.count.iter().for_each(|(_, value)| {
+            let v = *value;
+            max = v.max(max);
+            min = v.min(min);
+        });
+        max.checked_sub(min).unwrap()
+    }
+}
+
+impl<'a> Iterator for ChainPolymerTemplate<'a> {
+    type Item = ();
+
+    // There might be multiple chains (NN, NC, CB etc)
+    fn next(&mut self) -> Option<Self::Item> {
+        // For every next iteration
+        // Check the map for new "char" to be added in between
+        // Update the chain with the new chars added
+        // Increment the chain and the count maps
+
+        let mut new_chain = HashMap::new();
+        let mut new_maps_insert = |key: String, amount: usize| {
+            if new_chain.contains_key(&key) {
+                let value = new_chain.get_mut(&key).unwrap();
+                *value += amount;
+            } else {
+                new_chain.insert(key, amount);
+            }
+        };
+
+        let mut count_insert = |ch: char, amount: usize| {
+            if self.count.contains_key(&ch) {
+                let value = self.count.get_mut(&ch).unwrap();
+                *value += amount;
+            } else {
+                self.count.insert(ch, amount);
+            }
+        };
+
+        self.chain
+            .iter()
+            .filter(|&(chain_key, _)| self.map.contains_key(chain_key))
+            .for_each(|(chain_key, chain_value)| {
+                let map_value = self.map.get(chain_key).unwrap();
+                count_insert(map_value.clone(), chain_value.clone());
+
+                let ch1 =
+                    chain_key.chars().take(1).last().unwrap().to_string() + &map_value.to_string();
+                let ch2 = map_value.to_string() + &chain_key.chars().last().unwrap().to_string();
+                new_maps_insert(ch1, chain_value.clone());
+                new_maps_insert(ch2, chain_value.clone());
+            });
+
+        // println!("Chain: {:?}", self.chain);
+        // println!("New Maps: {:?}", new_chain);
+        // println!("Count: {:?}", self.count);
+        // println!("-------------------------");
+        self.chain = new_chain;
+
+        Some(())
+    }
+}
+
+fn day14_part2(start: String, map: &HashMap<String, char>) -> usize {
+    0
+}
+
+pub fn day14_part2_solution() {}
 
 #[cfg(test)]
 mod tests {
@@ -150,5 +263,21 @@ CN -> C";
 
         let solution = day14_part1_solution(&PathBuf::new().join("inputs").join("day14_input.txt"));
         println!("Solution: {}", solution);
+    }
+
+    #[test]
+    fn test_day14_part1_method2() {
+        let (start, map) = test_parse();
+        let mut chain_polymer_template = ChainPolymerTemplate::new(start.clone(), &map);
+        chain_polymer_template.nth(9);
+        assert_eq!(chain_polymer_template.get_diff(), 1588);
+    }
+
+    #[test]
+    fn test_day14_part2() {
+        let (start, map) = test_parse();
+        let mut chain_polymer_template = ChainPolymerTemplate::new(start.clone(), &map);
+        chain_polymer_template.nth(39);
+        assert_eq!(chain_polymer_template.get_diff(), 2188189693529);
     }
 }
