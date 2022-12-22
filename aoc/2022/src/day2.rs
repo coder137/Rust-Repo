@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum RPS {
     Rock,
     Paper,
@@ -77,6 +77,75 @@ pub fn day2_part1_solution(path: &PathBuf) -> String {
     day2_part1(&parsed_data).to_string()
 }
 
+enum Action {
+    Lose,
+    Draw,
+    Win,
+}
+
+impl Action {
+    fn for_lose(opponent: &RPS) -> RPS {
+        match opponent {
+            RPS::Rock => RPS::Scissor,
+            RPS::Paper => RPS::Rock,
+            RPS::Scissor => RPS::Paper,
+        }
+    }
+
+    fn for_draw(opponent: &RPS) -> RPS {
+        *opponent
+    }
+
+    fn for_win(opponent: &RPS) -> RPS {
+        match opponent {
+            RPS::Rock => RPS::Paper,
+            RPS::Paper => RPS::Scissor,
+            RPS::Scissor => RPS::Rock,
+        }
+    }
+}
+
+fn day2_part2(data: &Vec<(RPS, Action)>) -> u32 {
+    data.iter()
+        .map(|(opponent, player_action)| match player_action {
+            Action::Lose => 0 + RPS::to_num(&Action::for_lose(opponent)),
+            Action::Draw => 3 + RPS::to_num(&Action::for_draw(opponent)),
+            Action::Win => 6 + RPS::to_num(&Action::for_win(opponent)),
+        })
+        .sum()
+}
+
+fn parse_values_from_file_for_part2(path: &PathBuf) -> Vec<(RPS, Action)> {
+    let input = common::read_file(path);
+    input
+        .trim()
+        .split("\n")
+        .map(|line| {
+            let rps_pair = line.trim().split(" ").collect::<Vec<&str>>();
+            let prediction = match rps_pair[0] {
+                "A" => RPS::Rock,
+                "B" => RPS::Paper,
+                "C" => RPS::Scissor,
+                _ => panic!("Invalid option"),
+            };
+
+            let player_move = match rps_pair[1] {
+                "X" => Action::Lose,
+                "Y" => Action::Draw,
+                "Z" => Action::Win,
+                _ => panic!("Invalid option"),
+            };
+
+            (prediction, player_move)
+        })
+        .collect::<Vec<(RPS, Action)>>()
+}
+
+pub fn day2_part2_solution(path: &PathBuf) -> String {
+    let parsed_data = parse_values_from_file_for_part2(path);
+    day2_part2(&parsed_data).to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,8 +179,37 @@ mod tests {
             .collect::<Vec<(RPS, RPS)>>()
     }
 
+    fn test_input_parse_for_p2() -> Vec<(RPS, Action)> {
+        let input = "A Y
+        B X
+        C Z";
+
+        input
+            .trim()
+            .split("\n")
+            .map(|line| {
+                let rps_pair = line.trim().split(" ").collect::<Vec<&str>>();
+                let prediction = match rps_pair[0] {
+                    "A" => RPS::Rock,
+                    "B" => RPS::Paper,
+                    "C" => RPS::Scissor,
+                    _ => panic!("Invalid option"),
+                };
+
+                let player_move = match rps_pair[1] {
+                    "X" => Action::Lose,
+                    "Y" => Action::Draw,
+                    "Z" => Action::Win,
+                    _ => panic!("Invalid option"),
+                };
+
+                (prediction, player_move)
+            })
+            .collect::<Vec<(RPS, Action)>>()
+    }
+
     #[test]
-    fn test_day1_part1() {
+    fn test_day2_part1() {
         let parsed_data = test_input_parse();
         println!("Parsed Data: {:?}", parsed_data);
 
@@ -134,5 +232,11 @@ mod tests {
         assert_eq!(final_answer, 15);
 
         assert_eq!(day2_part1(&parsed_data), 15);
+    }
+
+    #[test]
+    fn test_day2_part2() {
+        let parsed_data = test_input_parse_for_p2();
+        assert_eq!(day2_part2(&parsed_data), 12);
     }
 }
