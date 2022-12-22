@@ -54,6 +54,29 @@ pub fn day3_part1_solution(path: &PathBuf) -> String {
     day3_part1(&parsed_data).to_string()
 }
 
+fn find_badge(elves_bags: &[String]) -> u32 {
+    let first = create_hashset(&elves_bags[0]);
+    let second = create_hashset(&elves_bags[1]);
+    let third = create_hashset(&elves_bags[2]);
+
+    first
+        .intersection(&second)
+        .map(|c| *c)
+        .collect::<HashSet<char>>()
+        .intersection(&third)
+        .map(|c| to_priority(*c))
+        .sum()
+}
+
+fn day3_part2(data: &Vec<String>) -> u32 {
+    data.chunks(3).map(|data| find_badge(data)).sum()
+}
+
+pub fn day3_part2_solution(path: &PathBuf) -> String {
+    let parsed_data = parse_values_from_file(path);
+    day3_part2(&parsed_data).to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashSet;
@@ -102,5 +125,12 @@ mod tests {
         assert_eq!(ans, 157);
 
         assert_eq!(day3_part1(&parsed_data), 157);
+    }
+
+    #[test]
+    fn test_day3_part2() {
+        let parsed_data = test_input_parse();
+        let ans = day3_part2(&parsed_data);
+        assert_eq!(ans, 70);
     }
 }
