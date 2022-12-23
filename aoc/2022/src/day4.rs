@@ -20,8 +20,16 @@ impl Range {
     }
 
     /// This function only works for positive numbers
+    /// [other.start, other.end] is present between [start, end]
     fn fully_contains(&self, other: &Range) -> bool {
         self.start <= other.start && self.end >= other.end
+    }
+
+    /// other.start is present between [start, end] OR
+    /// other.end is present between [start, end]
+    fn overlaps(&self, other: &Range) -> bool {
+        (self.start <= other.start && self.end >= other.start)
+            || (self.start <= other.end && self.end >= other.end)
     }
 }
 
@@ -49,6 +57,17 @@ fn parse_values_from_file(path: &PathBuf) -> Vec<(Range, Range)> {
 pub fn day4_part1_solution(path: &PathBuf) -> String {
     let parsed_data = parse_values_from_file(path);
     day4_part1(&parsed_data).to_string()
+}
+
+fn day4_part2(data: &Vec<(Range, Range)>) -> usize {
+    data.iter()
+        .filter(|(first, second)| first.overlaps(second) || second.overlaps(first))
+        .count()
+}
+
+pub fn day4_part2_solution(path: &PathBuf) -> String {
+    let parsed_data = parse_values_from_file(path);
+    day4_part2(&parsed_data).to_string()
 }
 
 #[cfg(test)]
@@ -94,5 +113,11 @@ mod tests {
 
         let parsed_data = test_parse_input();
         assert_eq!(day4_part1(&parsed_data), 2);
+    }
+
+    #[test]
+    fn test_day4_part2() {
+        let parsed_data = test_parse_input();
+        assert_eq!(day4_part2(&parsed_data), 4);
     }
 }
