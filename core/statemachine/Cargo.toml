@@ -10,3 +10,5 @@ name = "statemachine"
 path = "src/lib.rs"
 
 [dependencies]
+tokio = { version = "1.0", features = ["full"] }
+async-trait = "0.1"

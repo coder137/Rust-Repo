@@ -1,6 +1,8 @@
 use std::{convert::Infallible, time::Duration};
 
-use statemachine::{StateMachine, StateTransition};
+use async_trait::async_trait;
+use statemachine::{AsyncStateMachine, AsyncStateTransition};
+use tokio::{select, signal};
 
 #[derive(Debug)]
 enum State {
@@ -40,7 +42,8 @@ impl TrafficLight {
     }
 }
 
-impl StateTransition<Event, Common, Infallible> for TrafficLight {
+#[async_trait]
+impl AsyncStateTransition<Event, Common, Infallible> for TrafficLight {
     fn next(self, previous_event: Event) -> Result<Option<Self>, Infallible> {
         let state = match (self.current_state, previous_event) {
             (State::Red { .. }, Event::RedDone) => Self::yellow_light(),
@@ -53,44 +56,44 @@ impl StateTransition<Event, Common, Infallible> for TrafficLight {
         Ok(Some(state))
     }
 
-    fn run(&mut self, common: &mut Common) -> Event {
+    async fn run(&mut self, common: &mut Common) -> Event {
         match self.current_state {
             State::Red { wait } => {
-                common.wait_for("Red", wait);
+                common.wait_for("Red", wait).await;
                 Event::RedDone
             }
             State::Yellow { wait } => {
-                common.wait_for("Yellow", wait);
+                common.wait_for("Yellow", wait).await;
                 Event::YellowDone
             }
             State::Green { wait } => {
-                common.wait_for("Green", wait);
+                common.wait_for("Green", wait).await;
                 Event::GreenDone
             }
         }
-    }
-
-    fn start(&mut self, _data: &mut Common) {
-        println!("Start");
-    }
-
-    fn end(&mut self, _data: &mut Common) {
-        println!("End");
     }
 }
 
 struct Common;
 
 impl Common {
-    fn wait_for(&self, identifier: &str, mut time: usize) {
+    async fn wait_for(&self, identifier: &str, mut time: usize) {
         while time != 0 {
             println!("{identifier}");
-            std::thread::sleep(Duration::from_secs(1));
+            tokio::time::sleep(Duration::from_secs(1)).await;
             time -= 1;
         }
     }
 }
 
-fn main() {
-    StateMachine::run(TrafficLight::red_light(), Common).unwrap();
+#[tokio::main]
+async fn main() {
+    select! {
+        result = AsyncStateMachine::run(TrafficLight::red_light(), Common) => {
+            println!("Result: {result:?}");
+        }
+        _ = signal::ctrl_c() => {
+            println!("Exiting");
+        }
+    };
 }
