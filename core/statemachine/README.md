@@ -4,9 +4,11 @@ Goal: Modelling a UML StateDiagram to a StateMachine in rust
 
 # Definition
 
-- Can move from one state to the next state
-- Can move from one state to the end state (termination) (optional)
-- 
+- [x] Can move from one state to the next state
+- [x] Can move from one state to the end state (termination) (optional)
+- [x] Define transition constraints from one State to another State
+  - [x] At Run time
+  - [ ] At Compile time
 
 # Implementations
 
