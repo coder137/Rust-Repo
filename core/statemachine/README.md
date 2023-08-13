@@ -37,8 +37,35 @@ Goal: Modelling a UML StateDiagram to a StateMachine in rust
 title: Traffic Light
 ---
 stateDiagram-v2
-    [*] --> Red
-    Red --> Yellow: RedDone
-    Yellow --> Green: YellowDone
-    Green --> Red: GreenDone
+    Red --> Yellow: YellowStart
+    Red --> Failure: GreenStart
+    Red --> Failure: RedStart
+
+    Yellow --> Green: GreenStart
+    Yellow --> Failure: RedStart
+    Yellow --> Failure: YellowStart
+
+    Green --> Red: RedStart
+    Green --> Failure: YelloStart
+    Green --> Failure: GreenStart
+```
+
+## Door
+
+```mermaid
+---
+title: Door
+---
+stateDiagram-v2
+    Closed --> Opened: Open
+    Closed --> Locked: Lock
+    Closed --> Closed: Close
+
+    Opened --> Closed: Close
+    Opened --> Opened: Open
+    Opened --> Failure: Lock
+
+    Locked --> Closed: Unlock
+    Locked --> Locked: Lock
+    Locked --> Failure: Open
 ```
