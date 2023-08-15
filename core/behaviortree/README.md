@@ -1,5 +1,12 @@
 # BehaviorTree
 
+# TODO
+
+- [ ] Heap profiling
+- [ ] Unit tests with branch coverage
+- [ ] Visualization using Graphviz
+- [ ] Dynamnic visualization (see Groot2)
+
 # Example
 
 ## Traffic Light
@@ -9,9 +16,11 @@
 title: Traffic Light
 ---
 graph TB
-    Parallel --> WaitForever
-    Parallel --> Sequence
-    Sequence --> Red
-    Sequence --> Yellow
-    Sequence --> Green
+    While --> WaitForever
+    subgraph WaitForever
+        direction TB
+        Sequence --> Red
+        Sequence --> Yellow
+        Sequence --> Green
+    end
 ```
