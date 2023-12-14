@@ -55,8 +55,21 @@ pub fn day2_part1_solution(input: String) -> String {
             let is_invalid = g.sets.iter().any(|&(r, g, b)| r > 12 || g > 13 || b > 14);
             !is_invalid
         })
-        // .filter(|g| g.r <= 12 && g.g <= 13 && g.b <= 14)
         .map(|g| g.id)
+        .sum();
+    ans.to_string()
+}
+
+pub fn day2_part2_solution(input: String) -> String {
+    let games = parse_input(input);
+    let ans: usize = games
+        .iter()
+        .map(|g| {
+            let r_max = g.sets.iter().map(|&(r, _, _)| r).max().unwrap();
+            let g_max = g.sets.iter().map(|&(_, g, _)| g).max().unwrap();
+            let b_max = g.sets.iter().map(|&(_, _, b)| b).max().unwrap();
+            r_max * g_max * b_max
+        })
         .sum();
     ans.to_string()
 }
@@ -73,5 +86,11 @@ mod tests {
         // println!("{games:?}");
         let ans = day2_part1_solution(INPUT_STR.into());
         assert_eq!(ans, "8");
+    }
+
+    #[test]
+    fn test_day2_part2() {
+        let ans = day2_part2_solution(INPUT_STR.into());
+        assert_eq!(ans, "2286");
     }
 }
