@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 mod day1;
-// mod day2;
+mod day2;
 // mod day3;
 // mod day4;
 
@@ -10,7 +10,7 @@ fn main() {
     let solutions = [
         day1::day1_part1_solution,
         day1::day1_part2_solution,
-        // day2::day2_part1_solution,
+        day2::day2_part1_solution,
         // day2::day2_part2_solution,
         // day3::day3_part1_solution,
         // day3::day3_part2_solution,
