@@ -3,7 +3,7 @@ use std::collections::HashMap;
 fn parse_input(input: String) -> Vec<String> {
     input
         .trim()
-        .split("\n")
+        .split('\n')
         .map(|d| d.to_owned())
         .collect::<Vec<String>>()
 }
@@ -15,10 +15,7 @@ pub fn day1_part1_solution(input: String) -> String {
         .map(|l| {
             let parsed = l
                 .chars()
-                .filter_map(|d| {
-                    let digit = d.to_digit(10);
-                    digit
-                })
+                .filter_map(|d| d.to_digit(10))
                 .collect::<Vec<u32>>();
             assert!(!parsed.is_empty());
             let number = parsed.first().unwrap() * 10 + parsed.last().unwrap();
@@ -111,7 +108,7 @@ mod tests {
     const INPUT_STR2: &str = "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen";
 
     #[test]
-    fn test_solution1() {
+    fn test_day1_part1() {
         let parsed = parse_input(INPUT_STR.into());
         println!("parsed: {:?}", parsed);
         let ans = day1_part1_solution(INPUT_STR.into());
@@ -119,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn test_solution2() {
+    fn test_day1_part2() {
         let parsed = parse_input(INPUT_STR2.into());
         println!("parsed: {:?}", parsed);
         let map = HashMap::from([
