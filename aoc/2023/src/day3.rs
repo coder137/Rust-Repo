@@ -5,7 +5,10 @@ struct Number {
     y: usize,
 }
 
-type Symbol = (usize, usize);
+struct Symbol {
+    sym: char,
+    pos: (usize, usize),
+}
 
 impl Number {
     fn is_part_number(&self, symbols: &Vec<Symbol>) -> bool {
@@ -15,11 +18,13 @@ impl Number {
         let bottom_y = self.y + 1;
         symbols
             .iter()
-            .filter(|&&(x, y)| {
+            .filter(|s| {
                 // NOTE, Symbol should be inside top_left, top_right, bottom_left or bottom_right bound
                 // left_x <= x <= right_x;
                 // top_y <= y <= bottom_y;
-                left_x <= x && x <= right_x && top_y <= y && y <= bottom_y
+                let sym_x = s.pos.0;
+                let sym_y = s.pos.1;
+                left_x <= sym_x && sym_x <= right_x && top_y <= sym_y && sym_y <= bottom_y
             })
             .count()
             != 0
@@ -73,11 +78,10 @@ fn extract_numbers_from_line(line: &str) -> Vec<(usize, (usize, usize))> {
     numbers
 }
 
-fn extract_symbol_from_line(line: &str) -> Vec<usize> {
+fn extract_symbol_from_line(line: &str) -> Vec<(usize, char)> {
     line.chars()
         .enumerate()
         .filter(|&(_, c)| c != '.' && !c.is_numeric())
-        .map(|(x_pos, _)| x_pos)
         .collect()
 }
 
@@ -103,7 +107,10 @@ fn parse_input(input: String) -> (Vec<Number>, Vec<Symbol>) {
         .map(|(y, l)| {
             extract_symbol_from_line(l)
                 .iter()
-                .map(|&x| (x, y))
+                .map(|&(x, c)| Symbol {
+                    sym: c,
+                    pos: (x, y),
+                })
                 .collect::<Vec<Symbol>>()
         })
         .flatten()
