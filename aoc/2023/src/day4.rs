@@ -1,13 +1,14 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 struct Card {
+    id: usize,
     winning_numbers: HashSet<usize>,
     your_numbers: Vec<usize>,
 }
 
 impl Card {
-    fn points(&self) -> usize {
+    fn won(&self) -> usize {
         let won_numbers: usize = self
             .your_numbers
             .iter()
@@ -19,7 +20,11 @@ impl Card {
                 }
             })
             .sum();
+        won_numbers
+    }
 
+    fn points(&self) -> usize {
+        let won_numbers: usize = self.won();
         if won_numbers == 0 {
             return 0;
         }
@@ -35,6 +40,12 @@ fn parse_input(input: String) -> Vec<Card> {
         .map(|l| {
             let card = l.split('|').collect::<Vec<&str>>();
             let winning_numbers = card[0].split_terminator(":").collect::<Vec<&str>>();
+            let id: usize = winning_numbers[0]
+                .split_ascii_whitespace()
+                .last()
+                .unwrap()
+                .parse()
+                .unwrap();
             let winning_numbers = winning_numbers[1]
                 .trim()
                 .split_ascii_whitespace()
@@ -46,6 +57,7 @@ fn parse_input(input: String) -> Vec<Card> {
                 .map(|l| l.parse::<usize>().unwrap())
                 .collect::<Vec<usize>>();
             Card {
+                id,
                 winning_numbers,
                 your_numbers,
             }
