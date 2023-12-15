@@ -11,7 +11,7 @@ struct Symbol {
 }
 
 impl Symbol {
-    fn get_gear_ratio(&self, numbers: &Vec<Number>) -> Option<usize> {
+    fn get_gear_ratio(&self, numbers: &[Number]) -> Option<usize> {
         if self.sym != '*' {
             return None;
         }
@@ -27,9 +27,9 @@ impl Symbol {
 
 impl Number {
     fn is_adjacent(&self, symbol: &Symbol) -> bool {
-        let left_x = self.x_range.0.checked_sub(1).unwrap_or(0);
+        let left_x = self.x_range.0.saturating_sub(1);
         let right_x = self.x_range.1 + 1;
-        let top_y = self.y.checked_sub(1).unwrap_or(0);
+        let top_y = self.y.saturating_sub(1);
         let bottom_y = self.y + 1;
 
         let sym_x = symbol.pos.0;
@@ -37,7 +37,7 @@ impl Number {
         left_x <= sym_x && sym_x <= right_x && top_y <= sym_y && sym_y <= bottom_y
     }
 
-    fn is_part_number(&self, symbols: &Vec<Symbol>) -> bool {
+    fn is_part_number(&self, symbols: &[Symbol]) -> bool {
         symbols.iter().filter(|s| self.is_adjacent(s)).count() != 0
     }
 }
@@ -105,17 +105,16 @@ fn parse_input(input: String) -> (Vec<Number>, Vec<Symbol>) {
 
     let numbers = iter
         .clone()
-        .map(|(y, l)| {
+        .flat_map(|(y, l)| {
             extract_numbers_from_line(l)
                 .iter()
                 .map(|&(num, x_range)| Number { num, x_range, y })
                 .collect::<Vec<Number>>()
         })
-        .flatten()
         .collect::<Vec<Number>>();
 
     let symbols = iter
-        .map(|(y, l)| {
+        .flat_map(|(y, l)| {
             extract_symbol_from_line(l)
                 .iter()
                 .map(|&(x, c)| Symbol {
@@ -124,7 +123,6 @@ fn parse_input(input: String) -> (Vec<Number>, Vec<Symbol>) {
                 })
                 .collect::<Vec<Symbol>>()
         })
-        .flatten()
         .collect::<Vec<Symbol>>();
     (numbers, symbols)
 }
@@ -151,10 +149,7 @@ pub fn day3_part2_solution(input: String) -> String {
     let (numbers, symbols) = parse_input(input);
     let ans: usize = symbols
         .iter()
-        .map(|s| match s.get_gear_ratio(&numbers) {
-            Some(ratio) => ratio,
-            None => 0,
-        })
+        .map(|s| s.get_gear_ratio(&numbers).unwrap_or(0))
         .sum();
     ans.to_string()
 }
