@@ -10,24 +10,35 @@ struct Symbol {
     pos: (usize, usize),
 }
 
+impl Symbol {
+    fn get_gear_ratio(&self, numbers: &Vec<Number>) -> Option<usize> {
+        if self.sym != '*' {
+            return None;
+        }
+        let iter = numbers.iter().filter(|n| n.is_adjacent(self));
+        let is_gear_part = iter.clone().count() == 2;
+        if is_gear_part {
+            Some(iter.map(|n| n.num).product())
+        } else {
+            None
+        }
+    }
+}
+
 impl Number {
-    fn is_part_number(&self, symbols: &Vec<Symbol>) -> bool {
+    fn is_adjacent(&self, symbol: &Symbol) -> bool {
         let left_x = self.x_range.0.checked_sub(1).unwrap_or(0);
         let right_x = self.x_range.1 + 1;
         let top_y = self.y.checked_sub(1).unwrap_or(0);
         let bottom_y = self.y + 1;
-        symbols
-            .iter()
-            .filter(|s| {
-                // NOTE, Symbol should be inside top_left, top_right, bottom_left or bottom_right bound
-                // left_x <= x <= right_x;
-                // top_y <= y <= bottom_y;
-                let sym_x = s.pos.0;
-                let sym_y = s.pos.1;
-                left_x <= sym_x && sym_x <= right_x && top_y <= sym_y && sym_y <= bottom_y
-            })
-            .count()
-            != 0
+
+        let sym_x = symbol.pos.0;
+        let sym_y = symbol.pos.1;
+        left_x <= sym_x && sym_x <= right_x && top_y <= sym_y && sym_y <= bottom_y
+    }
+
+    fn is_part_number(&self, symbols: &Vec<Symbol>) -> bool {
+        symbols.iter().filter(|s| self.is_adjacent(s)).count() != 0
     }
 }
 
@@ -136,6 +147,18 @@ pub fn day3_part1_solution(input: String) -> String {
     ans.to_string()
 }
 
+pub fn day3_part2_solution(input: String) -> String {
+    let (numbers, symbols) = parse_input(input);
+    let ans: usize = symbols
+        .iter()
+        .map(|s| match s.get_gear_ratio(&numbers) {
+            Some(ratio) => ratio,
+            None => 0,
+        })
+        .sum();
+    ans.to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -155,5 +178,11 @@ mod tests {
     fn test_day3_part1() {
         let ans = day3_part1_solution(INPUT_STR.into());
         assert_eq!(ans, "4361");
+    }
+
+    #[test]
+    fn test_day3_part2() {
+        let ans = day3_part2_solution(INPUT_STR.into());
+        assert_eq!(ans, "467835");
     }
 }
