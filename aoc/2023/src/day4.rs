@@ -39,7 +39,7 @@ fn parse_input(input: String) -> Vec<Card> {
         .split('\n')
         .map(|l| {
             let card = l.split('|').collect::<Vec<&str>>();
-            let winning_numbers = card[0].split_terminator(":").collect::<Vec<&str>>();
+            let winning_numbers = card[0].split_terminator(':').collect::<Vec<&str>>();
             let id: usize = winning_numbers[0]
                 .split_ascii_whitespace()
                 .last()
@@ -71,6 +71,43 @@ pub fn day4_part1_solution(input: String) -> String {
     ans.to_string()
 }
 
+pub fn day4_part2_solution(input: String) -> String {
+    let cards = parse_input(input);
+    let mut map = HashMap::new();
+
+    let mut final_map: HashMap<usize, usize> = HashMap::new();
+    cards.iter().for_each(|c| {
+        let id = c.id;
+        let won = c.won();
+        map.insert(id, won);
+
+        let add_num = match final_map.get_mut(&id) {
+            Some(data) => {
+                *data += 1;
+                *data
+            }
+            None => {
+                final_map.insert(id, 1);
+                1
+            }
+        };
+
+        for i in 0..won {
+            let new_id = id + i + 1;
+            match final_map.get_mut(&new_id) {
+                Some(data) => {
+                    *data += add_num;
+                }
+                None => {
+                    final_map.insert(new_id, add_num);
+                }
+            }
+        }
+    });
+    let ans: usize = final_map.values().copied().sum();
+    ans.to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,5 +126,11 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
 
         let ans = day4_part1_solution(INPUT_STR.into());
         assert_eq!(ans, "13");
+    }
+
+    #[test]
+    fn test_day4_part2() {
+        let ans = day4_part2_solution(INPUT_STR.into());
+        assert_eq!(ans, "30");
     }
 }
