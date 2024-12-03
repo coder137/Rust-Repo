@@ -11,7 +11,7 @@ fn parse_input(input: String) -> Vec<Vec<u32>> {
         .collect::<Vec<_>>()
 }
 
-pub fn is_safe(level: Vec<u32>) -> bool {
+pub fn is_safe(level: &[u32]) -> bool {
     let compare_is_decreasing = level[0] > level[1];
     level.windows(2).all(|d| {
         let is_decreasing = d[0] > d[1];
@@ -25,14 +25,32 @@ pub fn day2_part1_solution(input: String) -> String {
     let input = parse_input(input);
     let ans = input
         .into_iter()
-        .map(|i| if is_safe(i) { 1 } else { 0 })
+        .map(|i| if is_safe(&i) { 1 } else { 0 })
         .sum::<u32>();
     ans.to_string()
 }
 
-// pub fn day2_part2_solution(input: String) -> String {
-//     todo!()
-// }
+pub fn day2_part2_solution(input: String) -> String {
+    let input = parse_input(input);
+    let ans = input
+        .into_iter()
+        .map(|mut i| {
+            if is_safe(&i) {
+                1
+            } else {
+                for index in 0..i.len() {
+                    let element = i.remove(index);
+                    if is_safe(&i) {
+                        return 1;
+                    }
+                    i.insert(index, element);
+                }
+                0
+            }
+        })
+        .sum::<u32>();
+    ans.to_string()
+}
 
 #[cfg(test)]
 mod tests {
@@ -56,7 +74,8 @@ mod tests {
 
     #[test]
     fn test_day1_part2() {
-        // let ans = day2_part2_solution(INPUT_STR.into());
-        // println!("Ans: {ans}");
+        let ans = day2_part2_solution(INPUT_STR.into());
+        println!("Ans: {ans}");
+        assert_eq!(ans, "4");
     }
 }
