@@ -41,6 +41,13 @@ jobs:
           cargo build
           cargo test
           cargo run --release
+      
+      - name: Advent of Code 2024
+        working-directory: ${{github.workspace}}/aoc/2024
+        run: |
+          cargo build
+          cargo test
+          cargo run --release
 
       - name: FFI, Call C from Rust
         working-directory: ${{github.workspace}}/ffi/call_c_from_rust
