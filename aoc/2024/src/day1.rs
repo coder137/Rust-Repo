@@ -75,13 +75,12 @@ mod tests {
         let parsed = parse_input(INPUT_STR.into());
         println!("parsed: {:?}", parsed);
         let ans = day1_part1_solution(INPUT_STR.into());
-        println!("Ans: {ans}");
-        // assert_eq!(ans, "142");
+        assert_eq!(ans, "11");
     }
 
     #[test]
     fn test_day1_part2() {
         let ans = day1_part2_solution(INPUT_STR.into());
-        println!("Ans: {ans}");
+        assert_eq!(ans, "31");
     }
 }
