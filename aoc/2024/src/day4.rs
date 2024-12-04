@@ -6,7 +6,7 @@ pub fn parse_input(input: String) -> Vec<Vec<char>> {
         .collect()
 }
 
-const XMAS: &'static [char] = &['X', 'M', 'A', 'S'];
+const XMAS: &[char] = &['X', 'M', 'A', 'S'];
 
 struct XmasGrid {
     grid: Vec<Vec<char>>,
@@ -74,10 +74,8 @@ impl XmasGrid {
             return false;
         }
         let mut c = ['0'; 4];
-        let mut count = 0;
-        for x in point.0..=xmax {
-            c[count] = self.grid[x][point.1];
-            count += 1;
+        for (counter, x) in (point.0..=xmax).enumerate() {
+            c[counter] = self.grid[x][point.1];
         }
         c == self.xmas
     }
@@ -93,10 +91,8 @@ impl XmasGrid {
             None => return false,
         };
         let mut c = ['0'; 4];
-        let mut count = 0;
-        for x in (xmin..=point.0).rev() {
-            c[count] = self.grid[x][point.1];
-            count += 1;
+        for (counter, x) in (xmin..=point.0).rev().enumerate() {
+            c[counter] = self.grid[x][point.1];
         }
         c == self.xmas
     }
@@ -117,10 +113,8 @@ impl XmasGrid {
         }
 
         let mut c = ['0'; 4];
-        let mut counter = 0;
-        for (x, y) in (xmin..=point.0).rev().zip(point.1..=ymax) {
+        for (counter, (x, y)) in (xmin..=point.0).rev().zip(point.1..=ymax).enumerate() {
             c[counter] = self.grid[x][y];
-            counter += 1;
         }
         c == self.xmas
     }
@@ -141,10 +135,12 @@ impl XmasGrid {
             None => return false,
         };
         let mut c = ['0'; 4];
-        let mut counter = 0;
-        for (x, y) in (xmin..=point.0).rev().zip((ymin..=point.1).rev()) {
+        for (counter, (x, y)) in (xmin..=point.0)
+            .rev()
+            .zip((ymin..=point.1).rev())
+            .enumerate()
+        {
             c[counter] = self.grid[x][y];
-            counter += 1;
         }
         c == self.xmas
     }
@@ -164,11 +160,8 @@ impl XmasGrid {
         }
 
         let mut c = ['0'; 4];
-        let mut counter = 0;
-
-        for (x, y) in (point.0..=xmax).zip(point.1..=ymax) {
+        for (counter, (x, y)) in (point.0..=xmax).zip(point.1..=ymax).enumerate() {
             c[counter] = self.grid[x][y];
-            counter += 1;
         }
         c == self.xmas
     }
@@ -189,11 +182,8 @@ impl XmasGrid {
         };
 
         let mut c = ['0'; 4];
-        let mut counter = 0;
-
-        for (x, y) in (point.0..=xmax).zip((ymin..=point.1).rev()) {
+        for (counter, (x, y)) in (point.0..=xmax).zip((ymin..=point.1).rev()).enumerate() {
             c[counter] = self.grid[x][y];
-            counter += 1;
         }
         c == self.xmas
     }
@@ -204,9 +194,9 @@ pub fn day4_part1_solution(input: String) -> String {
     let xlist = input
         .iter()
         .enumerate()
-        .map(|(x, xline)| {
+        .flat_map(|(x, xline)| {
             //
-            xline.into_iter().enumerate().filter_map(move |(y, ychar)| {
+            xline.iter().enumerate().filter_map(move |(y, ychar)| {
                 //
                 if *ychar == 'X' {
                     Some((x, y))
@@ -215,7 +205,6 @@ pub fn day4_part1_solution(input: String) -> String {
                 }
             })
         })
-        .flatten()
         .collect::<Vec<_>>();
 
     let grid = XmasGrid::new(input);
@@ -270,10 +259,8 @@ impl XShapedMasGrid {
         let top_left_to_bottom_right = {
             // cross from top left to bottom right
             let mut c = ['0'; 3];
-            let mut counter = 0;
-            for (x, y) in (xmin..=xmax).zip(ymin..=ymax) {
+            for (counter, (x, y)) in (xmin..=xmax).zip(ymin..=ymax).enumerate() {
                 c[counter] = self.grid[x][y];
-                counter += 1;
             }
 
             c == ['M', 'A', 'S'] || c == ['S', 'A', 'M']
@@ -282,10 +269,8 @@ impl XShapedMasGrid {
         let bottom_left_to_top_right = {
             // cross from bottom left to top right
             let mut c = ['0'; 3];
-            let mut counter = 0;
-            for (x, y) in (xmin..=xmax).rev().zip(ymin..=ymax) {
+            for (counter, (x, y)) in (xmin..=xmax).rev().zip(ymin..=ymax).enumerate() {
                 c[counter] = self.grid[x][y];
-                counter += 1;
             }
 
             c == ['M', 'A', 'S'] || c == ['S', 'A', 'M']
@@ -300,9 +285,9 @@ pub fn day4_part2_solution(input: String) -> String {
     let alist = input
         .iter()
         .enumerate()
-        .map(|(x, xline)| {
+        .flat_map(|(x, xline)| {
             //
-            xline.into_iter().enumerate().filter_map(move |(y, ychar)| {
+            xline.iter().enumerate().filter_map(move |(y, ychar)| {
                 //
                 if *ychar == 'A' {
                     Some((x, y))
@@ -311,7 +296,6 @@ pub fn day4_part2_solution(input: String) -> String {
                 }
             })
         })
-        .flatten()
         .collect::<Vec<_>>();
 
     let grid = XShapedMasGrid::new(input);
