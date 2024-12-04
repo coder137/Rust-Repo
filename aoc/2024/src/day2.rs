@@ -64,7 +64,7 @@ mod tests {
 1 3 6 7 9";
 
     #[test]
-    fn test_day1_part1() {
+    fn test_part1() {
         let parsed = parse_input(INPUT_STR.into());
         println!("parsed: {:?}", parsed);
         let ans = day2_part1_solution(INPUT_STR.into());
@@ -73,7 +73,7 @@ mod tests {
     }
 
     #[test]
-    fn test_day1_part2() {
+    fn test_part2() {
         let ans = day2_part2_solution(INPUT_STR.into());
         println!("Ans: {ans}");
         assert_eq!(ans, "4");
