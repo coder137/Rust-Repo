@@ -226,6 +226,105 @@ pub fn day4_part1_solution(input: String) -> String {
     ans.to_string()
 }
 
+struct XShapedMasGrid {
+    grid: Vec<Vec<char>>,
+    vertical_len: usize,
+    horizontal_len: usize,
+}
+
+impl XShapedMasGrid {
+    pub fn new(grid: Vec<Vec<char>>) -> Self {
+        let vertical_len = grid.len();
+        let horizontal_len = grid[0].len();
+        Self {
+            grid,
+            vertical_len,
+            horizontal_len,
+        }
+    }
+
+    // M . M
+    // . A .
+    // S . S
+    // point is coordinates of A
+    pub fn is_x_mas(&self, point: (usize, usize)) -> bool {
+        let xmax = point.0 + 1;
+        if xmax >= self.vertical_len {
+            return false;
+        }
+        let xmin = point.0.checked_sub(1);
+        let xmin = match xmin {
+            Some(xmin) => xmin,
+            None => return false,
+        };
+        let ymax = point.1 + 1;
+        if ymax >= self.horizontal_len {
+            return false;
+        }
+        let ymin = point.1.checked_sub(1);
+        let ymin = match ymin {
+            Some(ymin) => ymin,
+            None => return false,
+        };
+
+        let top_left_to_bottom_right = {
+            // cross from top left to bottom right
+            let mut c = ['0'; 3];
+            let mut counter = 0;
+            for (x, y) in (xmin..=xmax).zip(ymin..=ymax) {
+                c[counter] = self.grid[x][y];
+                counter += 1;
+            }
+
+            c == ['M', 'A', 'S'] || c == ['S', 'A', 'M']
+        };
+
+        let bottom_left_to_top_right = {
+            // cross from bottom left to top right
+            let mut c = ['0'; 3];
+            let mut counter = 0;
+            for (x, y) in (xmin..=xmax).rev().zip(ymin..=ymax) {
+                c[counter] = self.grid[x][y];
+                counter += 1;
+            }
+
+            c == ['M', 'A', 'S'] || c == ['S', 'A', 'M']
+        };
+
+        top_left_to_bottom_right && bottom_left_to_top_right
+    }
+}
+
+pub fn day4_part2_solution(input: String) -> String {
+    let input = parse_input(input);
+    let alist = input
+        .iter()
+        .enumerate()
+        .map(|(x, xline)| {
+            //
+            xline.into_iter().enumerate().filter_map(move |(y, ychar)| {
+                //
+                if *ychar == 'A' {
+                    Some((x, y))
+                } else {
+                    None
+                }
+            })
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+
+    let grid = XShapedMasGrid::new(input);
+    let ans = alist
+        .into_iter()
+        .map(|apoint| {
+            //
+            grid.is_x_mas(apoint) as u32
+        })
+        .sum::<u32>();
+    ans.to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -246,5 +345,12 @@ MXMXAXMASX";
         let ans = day4_part1_solution(INPUT_STR.into());
         println!("Ans: {ans}");
         assert_eq!(ans, "18");
+    }
+
+    #[test]
+    fn test_part2() {
+        let ans = day4_part2_solution(INPUT_STR.into());
+        println!("Ans: {ans}");
+        assert_eq!(ans, "9");
     }
 }
