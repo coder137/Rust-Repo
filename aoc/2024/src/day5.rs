@@ -5,7 +5,7 @@ pub type Sequences = Vec<Vec<u32>>;
 
 pub struct Orderings(HashMap<u32, HashSet<u32>>);
 impl Orderings {
-    fn is_ordered(&self, sequence: &[u32]) -> bool {
+    pub fn is_ordered(&self, sequence: &[u32]) -> bool {
         for index in 0..sequence.len() - 1 {
             let preceding = sequence[index];
             let following = &sequence[index + 1..];
@@ -18,8 +18,27 @@ impl Orderings {
                 return false;
             }
         }
-
         true
+    }
+
+    fn reorder(&self, sequence: &mut [u32]) {
+        for index in 0..sequence.len() - 1 {
+            loop {
+                let current = sequence[index];
+                let following = &sequence[index + 1..];
+                let orderings = self
+                    .0
+                    .get(&current)
+                    .unwrap_or_else(|| panic!("Must contain a ordering key {current}"));
+                let is_ordered = following.iter().all(|f| orderings.contains(f));
+                // println!("{sequence:?} -> {current} {following:?} {is_ordered}");
+                if !is_ordered {
+                    sequence[index..].rotate_left(1);
+                } else {
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -77,6 +96,21 @@ pub fn day5_part1_solution(input: String) -> String {
     ans.to_string()
 }
 
+pub fn day5_part2_solution(input: String) -> String {
+    let (orderings, sequences) = parse_input(input);
+    let mut ans = 0;
+    for mut s in sequences {
+        let is_ordered = orderings.is_ordered(&s);
+        if is_ordered {
+            continue;
+        }
+        orderings.reorder(&mut s);
+        let num = s[s.len() / 2];
+        ans += num;
+    }
+    ans.to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,5 +149,12 @@ mod tests {
         let ans = day5_part1_solution(INPUT_STR.into());
         println!("Ans: {ans}");
         assert_eq!(ans, "143");
+    }
+
+    #[test]
+    fn test_part2() {
+        let ans = day5_part2_solution(INPUT_STR.into());
+        println!("Ans: {ans}");
+        assert_eq!(ans, "123");
     }
 }
