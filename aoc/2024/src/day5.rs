@@ -31,7 +31,6 @@ impl Orderings {
                     .get(&current)
                     .unwrap_or_else(|| panic!("Must contain a ordering key {current}"));
                 let is_ordered = following.iter().all(|f| orderings.contains(f));
-                // println!("{sequence:?} -> {current} {following:?} {is_ordered}");
                 if !is_ordered {
                     sequence[index..].rotate_left(1);
                 } else {
