@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum GuardAlignment {
     Up,
     Down,
@@ -9,17 +9,33 @@ enum GuardAlignment {
 }
 
 struct Map {
+    // constants
     grid_vertical_length: usize,
     grid_horizontal_length: usize,
     obstacles: HashSet<(usize, usize)>,
-    guard_position: (usize, usize),
-    guard_alignment: GuardAlignment,
 
     // state
-    traversed: usize,
+    guard_position: (usize, usize),
+    guard_alignment: GuardAlignment,
 }
 
 impl Map {
+    pub fn has_cycle(&mut self) -> bool {
+        let mut has_cycle = false;
+        let mut traversed_points = HashSet::new();
+        // traversed_points.reserve(1000);
+        while self.next().is_some() {
+            let current = (self.guard_position, self.guard_alignment);
+            if traversed_points.contains(&current) {
+                has_cycle = true;
+                break;
+            } else {
+                traversed_points.insert(current);
+            }
+        }
+        has_cycle
+    }
+
     fn try_up(&mut self) -> Option<()> {
         let xdir = self.guard_position.0;
         let next_xdir = match xdir.checked_sub(1) {
@@ -33,7 +49,6 @@ impl Map {
         } else {
             // Move
             self.guard_position.0 = next_xdir;
-            self.traversed += 1;
         }
 
         Some(())
@@ -52,7 +67,6 @@ impl Map {
         } else {
             // Move
             self.guard_position.0 = next_xdir;
-            self.traversed += 1;
         }
 
         Some(())
@@ -71,7 +85,6 @@ impl Map {
         } else {
             // Move
             self.guard_position.1 = next_ydir;
-            self.traversed += 1;
         }
 
         Some(())
@@ -88,7 +101,6 @@ impl Map {
             self.guard_alignment = GuardAlignment::Down;
         } else {
             self.guard_position.1 = next_ydir;
-            self.traversed += 1;
         }
 
         Some(())
@@ -148,14 +160,15 @@ fn parse_input(input: String) -> Map {
             }
         })
     });
+    let guard_position = guard_position.unwrap();
+    let guard_alignment = guard_alignment.unwrap();
 
     Map {
         grid_vertical_length,
         grid_horizontal_length,
         obstacles,
-        guard_position: guard_position.unwrap(),
-        guard_alignment: guard_alignment.unwrap(),
-        traversed: 0,
+        guard_position,
+        guard_alignment,
     }
 }
 
@@ -169,6 +182,39 @@ pub fn day6_part1_solution(input: String) -> String {
 
     let ans = pos.len();
     ans.to_string()
+}
+
+pub fn day6_part2_solution(input: String) -> String {
+    let mut input = parse_input(input);
+
+    let start_pos = input.guard_position;
+    let start_align = input.guard_alignment;
+
+    // Get path traversed by guard
+    let mut full_path_as_points = HashSet::new();
+    while input.next().is_some() {
+        full_path_as_points.insert(input.guard_position);
+    }
+
+    let mut obstacles_with_cycles = HashSet::new();
+    for obstacle in full_path_as_points {
+        assert!(!input.obstacles.contains(&obstacle));
+        // Set Map for simulation
+        input.obstacles.insert(obstacle);
+        input.guard_position = start_pos;
+        input.guard_alignment = start_align;
+
+        // Simulate
+        let has_cycle = input.has_cycle();
+        if has_cycle {
+            obstacles_with_cycles.insert(obstacle);
+        }
+
+        // Reset Map
+        input.obstacles.remove(&obstacle);
+    }
+
+    obstacles_with_cycles.len().to_string()
 }
 
 #[cfg(test)]
@@ -191,5 +237,12 @@ mod tests {
         let ans = day6_part1_solution(INPUT_STR.into());
         println!("Ans: {ans}");
         assert_eq!(ans, "41");
+    }
+
+    #[test]
+    fn test_part2() {
+        let ans = day6_part2_solution(INPUT_STR.into());
+        println!("Ans: {ans}");
+        assert_eq!(ans, "6");
     }
 }

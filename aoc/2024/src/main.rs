@@ -21,6 +21,7 @@ fn main() {
         day5::day5_part1_solution,
         day5::day5_part2_solution,
         day6::day6_part1_solution,
+        day6::day6_part2_solution,
     ];
 
     solutions.iter().enumerate().for_each(|(index, soln_cb)| {
